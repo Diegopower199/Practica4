@@ -1,0 +1,7 @@
+{
+    "deno.enable": true,
+    "deno.importMap": "/home/diego/Proyectos TypeScript/Practica4/import_map.json",
+    "deno.unstable": true,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "denoland.vscode-deno"
+}
