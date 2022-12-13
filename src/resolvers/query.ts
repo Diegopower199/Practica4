@@ -65,6 +65,7 @@ export const Query = {
       return {
         id: vendedor._id.toString(),
         name: vendedor.name,
+        dni: vendedor.dni,
         coches: vendedor.coches,
       };
 
@@ -91,6 +92,7 @@ export const Query = {
       return vendedores.map((vendedor: VendedorSchema) => ({
         id: vendedor._id.toString(),
         name: vendedor.name,
+        dni: vendedor.dni,
         coches: vendedor.coches,
       }));
     } catch (error) {

@@ -5,7 +5,12 @@ export const Concesionario = {
   vendedores: async (
     parent: ConcesionarioSchema,
   ): Promise<VendedorSchema[]> => {
-    return await VendedoresCollection.find({ _id: { $in: parent.vendedores } })
-      .toArray();
+    try {
+      return await VendedoresCollection.find({ _id: { $in: parent.vendedores } }).toArray();
+    }
+
+    catch (error) {
+      throw new Error(error);
+    }
   },
 };

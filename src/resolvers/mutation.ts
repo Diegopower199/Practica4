@@ -14,19 +14,34 @@ import { Coche, Concesionario, Vendedor } from "../types.ts";
 export const Mutation = {
   crearVendedor: async (
     _: unknown,
-    args: { name: string },
+    args: { name: string, dni: string },
   ): Promise<Vendedor> => {
     try {
+
+      if (!/^[0-9]{8}[BCDFGHJKLMNPRSTVWXYZ]{1}$/.test(args.dni)) {
+        throw new Error("El campo dni no se ha rellenado correctamente")
+      }
+
+      const vendedorDNIEncontrado = await VendedoresCollection.findOne({ dni: args.dni});
+
+      if (vendedorDNIEncontrado) {
+        throw new Error ("No puedes añadir a un vendedor con este dni, ya esta en la base de datos")
+      }
+
       const vendedor: ObjectId = await VendedoresCollection.insertOne({
         name: args.name,
+        dni: args.dni,
         coches: [],
       });
 
       return {
         id: vendedor.toString(),
         name: args.name,
+        dni: args.dni,
         coches: [],
       };
+      
+      
     } catch (error) {
       console.error(error);
       throw new Error(error);
@@ -47,7 +62,7 @@ export const Mutation = {
           args.matricula,
         )
       ) {
-        throw Error("Formato matricula incorrecto");
+        throw new Error("Formato matricula incorrecto");
       }
 
       const matriculaEncontrada: CocheSchema | undefined =
@@ -143,6 +158,7 @@ export const Mutation = {
         return {
           id: encontrarVendedor._id.toString(),
           name: encontrarVendedor.name,
+          dni: encontrarVendedor.dni,
           coches: encontrarVendedor.coches,
         };
       } else {

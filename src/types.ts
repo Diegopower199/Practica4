@@ -3,6 +3,7 @@ import { ObjectId } from "mongo";
 export type Vendedor = {
   id: string;
   name: string;
+  dni: string;
   coches: ObjectId[];
 };
 

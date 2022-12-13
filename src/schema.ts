@@ -4,6 +4,7 @@ export const typeDefs = gql`
 type Vendedor {
   id: String!
   name: String!
+  dni: String!
   coches: [Coche!]!
 }
 
@@ -32,7 +33,7 @@ type Query {
 }
 
 type Mutation {
-  crearVendedor(name: String!): Vendedor!
+  crearVendedor(name: String!, dni: String!): Vendedor!
   crearCoche(marca: String!, matricula: String!, asientos: Int!, precio: Int!): Coche!
   crearConcesionario(localidad: String!): Concesionario
   anadirCocheAUnVendedor(idCoche: String!, idVendedor: String!): Vendedor!
