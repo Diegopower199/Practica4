@@ -57,12 +57,16 @@ export const Mutation = {
     },
   ): Promise<Coche> => {
     try {
-      if (
-        !/^[0-9]{1,4}(?!.*(LL|CH))[BCDFGHJKLMNPRSTVWXYZ]{3}$/.test(
-          args.matricula,
-        )
-      ) {
+      if (!/^[0-9]{1,4}(?!.*(LL|CH))[BCDFGHJKLMNPRSTVWXYZ]{3}$/.test(args.matricula,)) {
         throw new Error("Formato matricula incorrecto");
+      }
+
+      if (args.asientos <= 0) {
+        throw new Error ("No puedes tener asientos negativos o 0 asientos")
+      }
+
+      if (args.precio <= 0) {
+        throw new Error ("NO puedes tener un precio negativo o a 0");
       }
 
       const matriculaEncontrada: CocheSchema | undefined =
@@ -143,6 +147,16 @@ export const Mutation = {
         throw new Error("No se encuentra el id del coche o del vendedor");
       }
 
+
+      const encontrarCocheArray= encontrarVendedor.coches.find( (coches)  => {
+        return coches.toString() === args.idCoche
+        
+      })
+
+      if (encontrarCocheArray) {
+        throw new Error ("Ya esta el id del coche en la base de datos de este vendedor")
+      }
+
       const vendedor = await VendedoresCollection.updateOne(
         { _id: new ObjectId(args.idVendedor) },
         {
@@ -212,6 +226,18 @@ export const Mutation = {
         );
       }
 
+      
+      // Para que no se repita el id en el array vendedor
+      const encontrarVendedorArray= encontrarConcesionario.vendedores.find( (vendedor)  => {
+        return vendedor.toString() === args.idVendedor
+        
+      })
+
+      if (encontrarVendedorArray) {
+        throw new Error ("Ya esta el id del vendedor en la base de datos de este concesionario")
+      }
+
+
       const concesionario = await ConcesionariosCollection.updateOne(
         { _id: new ObjectId(args.idConcesionario) },
         {
@@ -232,16 +258,7 @@ export const Mutation = {
       } else {
         throw new Error("NO se ha podido modificar al vendedor");
       }
-
-      /*return {
-          id: args.idVendedor,
-        }*/
-
-      /*const vendedor = await VendedoresCollection.updateOne (
-                {_id: new ObjectId (args.idVendedor)},
-                { $push: { coches: new ObjectId(coches._id)}}
-
-            );*/
+      
     } catch (error) {
       console.error(error);
       throw new Error(error);
