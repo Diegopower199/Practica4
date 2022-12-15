@@ -139,7 +139,16 @@ export const Query = {
         },
       }).toArray();
 
+
       if (!coches) throw new Error("No hay coches en ese rango de precio");
+
+      if (args.precioMin < 0 || args.precioMax < 0) {
+        throw new Error("El precio minimo o el precio maximo no pueden ser negativos");
+      }
+
+      if (args.precioMax < args.precioMin) {
+        throw new Error("El precio maximo es menor que el precio minimo");
+      }
 
       // quiero que en cada coche que me devuelva, me devuelva el id como string
       return coches.map((coche: CocheSchema) => ({
