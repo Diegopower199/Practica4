@@ -9,13 +9,12 @@ import {
   ConcesionarioSchema,
   VendedorSchema,
 } from "../db/schema.ts";
-import { Coche, Concesionario, Vendedor } from "../types.ts";
 
 export const Mutation = {
   crearVendedor: async (
     _: unknown,
     args: { name: string, dni: string },
-  ): Promise<Vendedor> => {
+  ): Promise<VendedorSchema> => {
     try {
 
       if (!/^[0-9]{8}[BCDFGHJKLMNPRSTVWXYZ]{1}$/.test(args.dni)) {
@@ -35,7 +34,7 @@ export const Mutation = {
       });
 
       return {
-        id: vendedor.toString(),
+        _id: vendedor,
         name: args.name,
         dni: args.dni,
         coches: [],
@@ -55,7 +54,7 @@ export const Mutation = {
       asientos: number;
       precio: number;
     },
-  ): Promise<Coche> => {
+  ): Promise<CocheSchema> => {
     try {
       if (!/^[0-9]{1,4}(?!.*(LL|CH))[BCDFGHJKLMNPRSTVWXYZ]{3}$/.test(args.matricula,)) {
         throw new Error("Formato matricula incorrecto");
@@ -84,7 +83,7 @@ export const Mutation = {
         precio: args.precio,
       });
       return {
-        id: coche.toString(),
+        _id: coche,
         marca: args.marca,
         matricula: args.matricula,
         asientos: args.asientos,
@@ -99,7 +98,7 @@ export const Mutation = {
   crearConcesionario: async (
     _: unknown,
     args: { localidad: string },
-  ): Promise<Concesionario> => {
+  ): Promise<ConcesionarioSchema> => {
     try {
       const concesionario: ObjectId = await ConcesionariosCollection.insertOne({
         localidad: args.localidad,
@@ -107,7 +106,7 @@ export const Mutation = {
       });
 
       return {
-        id: concesionario.toString(),
+        _id: concesionario,
         localidad: args.localidad,
         vendedores: [],
       };
@@ -120,7 +119,7 @@ export const Mutation = {
   anadirCocheAUnVendedor: async (
     _: unknown,
     args: { idCoche: string; idVendedor: string },
-  ): Promise<Vendedor> => {
+  ): Promise<VendedorSchema> => {
     try {
       const encontrarCoche: CocheSchema | undefined = await CochesCollection
         .findOne({ _id: new ObjectId(args.idCoche) });
@@ -170,7 +169,7 @@ export const Mutation = {
 
       if (vendedor) {
         return {
-          id: encontrarVendedor._id.toString(),
+          _id: encontrarVendedor._id,
           name: encontrarVendedor.name,
           dni: encontrarVendedor.dni,
           coches: encontrarVendedor.coches,
@@ -179,15 +178,6 @@ export const Mutation = {
         throw new Error("NO se ha podido modificar al vendedor");
       }
 
-      /*return {
-          id: args.idVendedor,
-        }*/
-
-      /*const vendedor = await VendedoresCollection.updateOne (
-                {_id: new ObjectId (args.idVendedor)},
-                { $push: { coches: new ObjectId(coches._id)}}
-
-            );*/
     } catch (error) {
       console.error(error);
       throw new Error(error);
@@ -197,7 +187,7 @@ export const Mutation = {
   anadirVendedorAUnConcesionario: async (
     _: unknown,
     args: { idConcesionario: string; idVendedor: string },
-  ): Promise<Concesionario> => {
+  ): Promise<ConcesionarioSchema> => {
     try {
       const encontrarConcesionario: ConcesionarioSchema | undefined =
         await ConcesionariosCollection.findOne({
@@ -251,7 +241,7 @@ export const Mutation = {
 
       if (concesionario) {
         return {
-          id: encontrarConcesionario._id.toString(),
+          _id: encontrarConcesionario._id,
           localidad: encontrarConcesionario.localidad,
           vendedores: encontrarConcesionario.vendedores,
         };

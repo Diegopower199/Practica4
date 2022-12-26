@@ -15,7 +15,7 @@ export const Query = {
   getConcesionarioPorId: async (
     _: unknown,
     args: { id: string },
-  ): Promise<Concesionario | null> => {
+  ): Promise<ConcesionarioSchema | null> => {
     const concesionarioExiste: ConcesionarioSchema | undefined =
       await ConcesionariosCollection.findOne({
         _id: new ObjectId(args.id),
@@ -25,7 +25,7 @@ export const Query = {
       throw new Error("No existe un concesionario con esa ID");
     }
     return {
-      id: args.id,
+      _id: concesionarioExiste._id,
       localidad: concesionarioExiste.localidad,
       vendedores: concesionarioExiste.vendedores,
     };
@@ -34,7 +34,7 @@ export const Query = {
   getConcesionarioPorLocalidad: async (
     _: unknown,
     args: { localidad: string },
-  ): Promise<Concesionario[]> => {
+  ): Promise<ConcesionarioSchema[]> => {
     const concesionarioExiste: ConcesionarioSchema[] | undefined =
       await ConcesionariosCollection.find({
         localidad: args.localidad,
@@ -45,7 +45,7 @@ export const Query = {
     }
 
     return concesionarioExiste.map((concesionario: ConcesionarioSchema) => ({
-      id: concesionario._id.toString(),
+      _id: concesionario._id,
       localidad: concesionario.localidad,
       vendedores: concesionario.vendedores,
     }));
@@ -54,7 +54,7 @@ export const Query = {
   getVendedorPorId: async (
     _: unknown,
     args: { id: string },
-  ): Promise<Vendedor | null> => {
+  ): Promise<VendedorSchema | null> => {
     try {
       const vendedor: VendedorSchema | undefined = await VendedoresCollection
         .findOne({
@@ -63,7 +63,7 @@ export const Query = {
       if (!vendedor) throw new Error("Vendedor no encontrado");
 
       return {
-        id: vendedor._id.toString(),
+        _id: vendedor._id,
         name: vendedor.name,
         dni: vendedor.dni,
         coches: vendedor.coches,
@@ -79,7 +79,7 @@ export const Query = {
   getVendedorPorNombre: async (
     _: unknown,
     args: { name: string },
-  ): Promise<Vendedor[]> => {
+  ): Promise<VendedorSchema[]> => {
     try {
       const vendedores: VendedorSchema[] = await VendedoresCollection.find({
         name: args.name,
@@ -90,7 +90,7 @@ export const Query = {
       }
 
       return vendedores.map((vendedor: VendedorSchema) => ({
-        id: vendedor._id.toString(),
+        _id: vendedor._id,
         name: vendedor.name,
         dni: vendedor.dni,
         coches: vendedor.coches,
@@ -104,7 +104,7 @@ export const Query = {
   getCochePorId: async (
     _: unknown,
     args: { id: string },
-  ): Promise<Coche | null> => {
+  ): Promise<CocheSchema | null> => {
     try {
       const coche: CocheSchema | undefined = await CochesCollection.findOne({
         _id: new ObjectId(args.id),
@@ -112,7 +112,7 @@ export const Query = {
       if (!coche) throw new Error("Coche no encontrado");
 
       return {
-        id: coche._id.toString(),
+        _id: coche._id,
         marca: coche.marca,
         matricula: coche.matricula,
         asientos: coche.asientos,
@@ -126,7 +126,7 @@ export const Query = {
   getCochePorRangoPrecio: async (
     _: unknown,
     args: { precioMin: number; precioMax: number },
-  ): Promise<Coche[]> => {
+  ): Promise<CocheSchema[]> => {
     try {
 
       if (args.precioMin < 0 || args.precioMax < 0) {
@@ -152,7 +152,7 @@ export const Query = {
 
       // quiero que en cada coche que me devuelva, me devuelva el id como string
       return coches.map((coche: CocheSchema) => ({
-        id: coche._id.toString(),
+        _id: coche._id,
         marca: coche.marca,
         matricula: coche.matricula,
         asientos: coche.asientos,
